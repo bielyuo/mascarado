@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Máscara Secreta</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --red: #c0152a; --red-glow: #ff2244; --dark: #080c10; --navy: #0d1520; --silver: #a8b8cc; --white: #eef2f7; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--dark); font-family: 'Rajdhani', sans-serif; color: var(--white); padding-top: 80px; }
+    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--dark); } ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 3px; }
+
+    /* NAV */
+    header { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(180deg,rgba(8,12,16,.98),rgba(8,12,16,.85)); border-bottom: 1px solid rgba(192,21,42,.35); backdrop-filter: blur(12px); }
+    nav { max-width: 1200px; margin: 0 auto; padding: 0 2rem; height: 70px; display: flex; align-items: center; gap: 1.5rem; }
+    .nav-home { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 8px; border: 1px solid rgba(192,21,42,.5); color: var(--silver); text-decoration: none; transition: all .2s; background: rgba(192,21,42,.08); flex-shrink: 0; }
+    .nav-home:hover { background: rgba(192,21,42,.25); border-color: var(--red-glow); color: var(--white); }
+    .nav-home svg { width: 20px; height: 20px; }
+    .nav-logo { display: flex; align-items: center; gap: .75rem; text-decoration: none; }
+    .nav-logo img { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(255,34,68,.5)); }
+    .nav-logo span { font-family: 'Orbitron',sans-serif; font-size: 1rem; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; background: linear-gradient(90deg,#fff,var(--silver)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .nav-links { display: flex; align-items: center; gap: .25rem; list-style: none; }
+    .nav-links a { font-family: 'Rajdhani',sans-serif; font-weight: 600; font-size: .88rem; letter-spacing: .1em; text-transform: uppercase; color: var(--silver); text-decoration: none; padding: .5rem .9rem; border-radius: 6px; transition: all .2s; }
+    .nav-links a:hover { color: var(--white); background: rgba(192,21,42,.2); }
+
+    /* SEARCH */
+    .search-wrap { position: relative; margin-left: auto; }
+    .search-input { width: 36px; height: 36px; padding: 0 0 0 36px; background: rgba(255,255,255,.06); border: 1px solid rgba(168,184,204,.15); border-radius: 20px; color: var(--white); font-family: 'Rajdhani',sans-serif; font-size: .9rem; outline: none; cursor: pointer; transition: all .35s; white-space: nowrap; overflow: hidden; }
+    .search-input:focus, .search-input.open { width: 220px; padding: 0 1rem 0 36px; border-color: rgba(192,21,42,.5); cursor: text; background: rgba(13,21,32,.9); }
+    .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--silver); pointer-events: none; font-size: .95rem; }
+    .search-dropdown { display: none; position: absolute; top: calc(100% + 8px); right: 0; width: 300px; background: var(--navy); border: 1px solid rgba(192,21,42,.35); border-radius: 10px; z-index: 300; overflow: hidden; }
+    .search-dropdown.show { display: block; }
+
+    /* SECTIONS */
+    section { max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+    .section-title { font-family: 'Orbitron',sans-serif; font-size: 1.8rem; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; margin-bottom: .5rem; }
+    .section-line { width: 60px; height: 3px; background: var(--red); margin-bottom: 2rem; box-shadow: 0 0 10px rgba(255,34,68,.5); }
+    .ep-count { font-size: .85rem; color: var(--red); letter-spacing: .1em; font-weight: 700; margin-bottom: .3rem; display: block; }
+
+    /* VIDEO GRID */
+    .video-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .video-card { background: var(--navy); border: 1px solid rgba(192,21,42,.2); border-radius: 10px; overflow: hidden; transition: 0.25s; text-decoration: none; color: inherit; display: flex; flex-direction: column; }
+    .video-card:hover { border-color: var(--red-glow); transform: translateY(-5px); }
+    .video-thumb { position: relative; width: 100%; aspect-ratio: 16/9; overflow: hidden; }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .ep-badge { position: absolute; top: 10px; right: 10px; background: #fff; color: #000; font-size: .7rem; font-weight: 900; padding: 3px 8px; border-radius: 4px; }
+    .video-info { padding: 1.2rem; flex-grow: 1; display: flex; flex-direction: column; }
+    .video-title { font-family: 'Orbitron',sans-serif; font-size: .85rem; font-weight: 700; margin-bottom: 1rem; }
+
+    .btn-page-serie {
+      margin-top: auto;
+      padding: 8px;
+      background: rgba(192,21,42,0.1);
+      border: 1px solid var(--red);
+      color: #fff;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+      border-radius: 4px;
+      transition: 0.2s;
+    }
+    .btn-page-serie:hover { background: var(--red); box-shadow: 0 0 10px var(--red-glow); }
+
+    /* PAGINAÇÃO */
+    .page-btn { min-width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--navy); border: 1px solid rgba(192,21,42,.2); border-radius: 6px; color: var(--silver); cursor: pointer; transition: 0.2s; font-weight: 700; padding: 0 8px; }
+    .page-btn:hover { border-color: var(--red); color: #fff; }
+    .page-btn.active { background: var(--red); border-color: var(--red); color: #fff; }
+    .page-btn.off { opacity: 0.3; pointer-events: none; }
+    .page-btn.dots { pointer-events: none; border: none; background: transparent; }
+    .page-btn.wide { min-width: 80px; font-size: 0.75rem; text-transform: uppercase; }
+
+    .divider { width: 100%; height: 1px; background: linear-gradient(90deg,transparent,rgba(192,21,42,.4),transparent); margin: 2rem 0; }
+    .serie-card-item { flex-shrink:0; width:220px; min-width:220px; background:var(--navy); border:1px solid rgba(192,21,42,.2); border-radius:12px; overflow:hidden; text-decoration:none; color:inherit; transition:.25s; display:block; }
+    .serie-card-item:hover { border-color:rgba(255,34,68,.5); transform:translateY(-4px); }
+    footer { text-align: center; padding: 2.5rem; color: rgba(168,184,204,.4); font-size: .85rem; border-top: 1px solid rgba(192,21,42,.15); }
+
+    @media (max-width: 900px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .video-grid { grid-template-columns: 1fr; } .nav-links { display:none } }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <a href="index.html" class="nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+    </a>
+    <a href="index.html" class="nav-logo">
+      <img src="img/logo.png" alt="">
+      <span>Máscara Secreta</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#series-section">Lançamentos</a></li>
+      <li><a href="#episodios">Episódios</a></li>
+      <li><a href="catalogo.html" class="active">Catálogo</a></li>
+    </ul>
+    <div class="search-wrap">
+      <input class="search-input" id="search-input" type="text" placeholder="Buscar série..." autocomplete="off" oninput="onSearch(this.value)" onfocus="this.classList.add('open');showSearchDrop()" onblur="setTimeout(function(){closeSearchDrop()},200)">
+      <span class="search-icon">🔍</span>
+      <div class="search-dropdown" id="search-dropdown"></div>
+    </div>
+  </nav>
+</header>
+
+<section id="series-section" style="display:none">
+  <h2 class="section-title">Lançamentos</h2>
+  <div class="section-line"></div>
+  <div id="series-cards" style="display:flex;gap:1.2rem;overflow-x:auto;padding-bottom:.5rem;scrollbar-width:thin;scrollbar-color:#c0152a #0d1520;-webkit-overflow-scrolling:touch;"></div>
+</section>
+
+<div id="series-divider" class="divider" style="display:none"></div>
+
+<section id="episodios">
+  <h2 class="section-title">Episódios</h2>
+  <span class="ep-count" id="ep-count">0 VÍDEOS</span>
+  <div class="section-line"></div>
+  <div class="video-grid" id="video-grid"></div>
+  <div id="pagination" style="display:none;justify-content:center;align-items:center;gap:.4rem;margin-top:2.5rem;flex-wrap:wrap"></div>
+</section>
+
+<footer><p>© 2025 Máscara Secreta · Todos os direitos reservados</p></footer>
+
+<script>
+  var videos = JSON.parse(localStorage.getItem('ms_videos') || '[]');
+  var allS = JSON.parse(localStorage.getItem('ms_series') || '[]');
+  var PER_PAGE = 18;
+  var curPage = 1;
+
+  function renderSeries() {
+    var visible = allS.filter(function(s){ return !s.hidden; });
+    visible.sort(function(a,b){ return (b.lastUpdated||0) - (a.lastUpdated||0); });
+    visible = visible.slice(0, 12);
+    var sec = document.getElementById('series-section');
+    var div = document.getElementById('series-divider');
+    var box = document.getElementById('series-cards');
+    if (!visible.length) { sec.style.display = 'none'; div.style.display = 'none'; return; }
+    sec.style.display = 'block'; div.style.display = 'block';
+    box.innerHTML = visible.map(function(s) {
+      var i = allS.indexOf(s);
+      var epCnt = videos.filter(function(v){
+        return v.ep && v.ep.indexOf(s.prefix + ' ') === 0;
+      }).length;
+      return '<a href="serie.html?id=' + i + '" class="serie-card-item">'
+        + (s.banner ? '<img src="' + s.banner + '" style="width:100%;height:148px;object-fit:cover;display:block">'
+                    : '<div style="height:148px;display:flex;align-items:center;justify-content:center;font-size:2.5rem">🎭</div>')
+        + '<div style="padding:.9rem 1rem;">'
+        + '<div style="font-family:Orbitron,sans-serif;font-weight:900;font-size:.82rem;margin-bottom:.35rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + s.name + '</div>'
+        + '<div style="font-size:.72rem;color:var(--red);font-weight:700;">' + epCnt + ' episódio' + (epCnt !== 1 ? 's' : '') + '</div>'
+        + '</div></a>';
+    }).join('');
+  }
+
+
+  function renderGrid(pg) {
+    if (pg !== undefined) curPage = pg;
+    var hidS = allS.filter(function(s){ return s.hidden; });
+    var vids = videos.filter(function(v){
+      if (v.hidden) return false;
+      if (v.gradeOnly === false) return false;
+      return !hidS.some(function(s){ return v.ep && v.ep.indexOf(s.prefix + ' ') === 0; });
+    });
+    document.getElementById('ep-count').textContent = vids.length + ' VÍDEO' + (vids.length !== 1 ? 'S' : '');
+    var grid = document.getElementById('video-grid');
+    if (!vids.length) { grid.innerHTML = '<p>Nenhum vídeo ainda</p>'; return; }
+
+    var total = Math.ceil(vids.length / PER_PAGE);
+    var start = (curPage - 1) * PER_PAGE;
+    var pageItems = vids.slice(start, start + PER_PAGE);
+
+    grid.innerHTML = pageItems.map(function(v) {
+      var serie = allS.find(function(s) { return v.ep && v.ep.indexOf(s.prefix + ' ') === 0; });
+      var serieIdx = allS.indexOf(serie);
+      var btnSerie = (serieIdx !== -1) ? 
+        '<div class="btn-page-serie" onclick="event.preventDefault(); window.location.href=\'serie.html?id=' + serieIdx + '\'">Acessar Página da Série</div>' : '';
+
+      return '<a class="video-card" href="' + (v.link||'#') + '" target="_blank">'
+        + '<div class="video-thumb">' 
+        + (v.img ? '<img src="' + v.img + '">' : '<div style="height:100%; display:flex; align-items:center; justify-content:center; font-size:3rem; opacity:0.3">🎭</div>')
+        + '<span class="ep-badge">' + (v.ep || 'EP') + '</span></div>'
+        + '<div class="video-info">'
+        + '<div class="video-title">' + v.title + '</div>'
+        + btnSerie
+        + '</div></a>';
+    }).join('');
+    renderPag(total);
+  }
+
+  function renderPag(total) {
+    var el = document.getElementById('pagination');
+    if (total <= 1) { el.style.display = 'none'; return; }
+    el.style.display = 'flex';
+    var p = curPage, h = '';
+
+    // Primeira e Anterior
+    h += '<button class="page-btn wide ' + (p === 1 ? 'off' : '') + '" onclick="renderGrid(1)">« Primeira</button>';
+    h += '<button class="page-btn ' + (p === 1 ? 'off' : '') + '" onclick="renderGrid(' + (p - 1) + ')">‹</button>';
+
+    // Lógica das Reticências (1 2 ... 5 6 7 ... 10)
+    var range = 2; // Quantas páginas mostrar ao lado da atual
+    for (var i = 1; i <= total; i++) {
+        if (i === 1 || i === total || (i >= p - range && i <= p + range)) {
+            h += '<button class="page-btn ' + (i === p ? 'active' : '') + '" onclick="renderGrid(' + i + ')">' + i + '</button>';
+        } else if (i === p - range - 1 || i === p + range + 1) {
+            h += '<span class="page-btn dots">...</span>';
+        }
+    }
+
+    // Próxima e Última
+    h += '<button class="page-btn ' + (p === total ? 'off' : '') + '" onclick="renderGrid(' + (p + 1) + ')">›</button>';
+    h += '<button class="page-btn wide ' + (p === total ? 'off' : '') + '" onclick="renderGrid(' + total + ')">Última »</button>';
+
+    el.innerHTML = h;
+  }
+
+  function onSearch(q) {
+    var dropdown = document.getElementById('search-dropdown');
+    q = q.trim().toLowerCase();
+    var results = allS.filter(function(s) { return !s.hidden && s.name.toLowerCase().indexOf(q) > -1; });
+    if (!q) { dropdown.classList.remove('show'); return; }
+    dropdown.classList.add('show');
+    dropdown.innerHTML = results.map(function(s) {
+      return '<a style="display:block;padding:10px;text-decoration:none;color:#fff;border-bottom:1px solid rgba(255,255,255,0.1)" href="serie.html?id='+allS.indexOf(s)+'">'+s.name+'</a>';
+    }).join('');
+  }
+
+  function showSearchDrop() { if (document.getElementById('search-input').value) document.getElementById('search-dropdown').classList.add('show'); }
+  function closeSearchDrop() { setTimeout(() => { document.getElementById('search-dropdown').classList.remove('show'); }, 200); }
+
+  renderGrid();
+  renderSeries();
+
+  /* ===== ATALHO Ctrl+Alt+A → Admin ===== */
+  window.addEventListener('keydown', function(e){
+    if (e.ctrlKey && e.altKey && (e.key==='a'||e.key==='A')){
+      e.preventDefault();
+      window.location.href='admin.html';
+    }
+  }, true);
+</script>
+</body>
+</html>
